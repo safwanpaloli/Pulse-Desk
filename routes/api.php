@@ -26,5 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/subscriptions', [\App\Http\Controllers\SubscriptionController::class, 'store']);
         Route::put('/subscriptions/{id}', [\App\Http\Controllers\SubscriptionController::class, 'update']);
         Route::put('/subscriptions/{id}/cancel', [\App\Http\Controllers\SubscriptionController::class, 'cancel']);
+
+        // Invoices
+        Route::get('/invoices', [\App\Http\Controllers\InvoiceController::class, 'index']);
+        Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store']);
+        Route::put('/invoices/{id}', [\App\Http\Controllers\InvoiceController::class, 'update']);
+        Route::put('/invoices/{id}/status', [\App\Http\Controllers\InvoiceController::class, 'updateStatus']);
     });
 });
