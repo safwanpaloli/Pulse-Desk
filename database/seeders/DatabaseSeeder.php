@@ -70,6 +70,27 @@ class DatabaseSeeder extends Seeder
                     }
                 });
             }
+            
+            // Give users some notifications
+            $numNotifs = fake()->numberBetween(2, 6);
+            for ($i = 0; $i < $numNotifs; $i++) {
+                $type = fake()->randomElement(['info', 'success', 'warning']);
+                $titles = [
+                    'info' => ['System Update', 'New Feature Available', 'Scheduled Maintenance'],
+                    'success' => ['Payment Received', 'Subscription Renewed', 'Ticket Resolved'],
+                    'warning' => ['Payment Overdue', 'Action Required', 'Subscription Expiring'],
+                ];
+                
+                $user->notify(new \App\Notifications\GeneralNotification(
+                    fake()->randomElement($titles[$type]),
+                    fake()->sentence(),
+                    $type,
+                    fake()->boolean() ? '/dashboard' : null
+                ));
+            }
+            
+            // Randomly mark some as read
+            $user->notifications()->take(fake()->numberBetween(0, $numNotifs))->get()->markAsRead();
         });
     }
 }

@@ -40,4 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/tickets/{id}/status', [\App\Http\Controllers\TicketController::class, 'updateStatus']);
         Route::post('/tickets/{id}/replies', [\App\Http\Controllers\TicketController::class, 'reply']);
     });
+    
+    // Notifications (All authenticated users)
+    Route::get('/notifications', [\App\Http\Controllers\API\NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\API\NotificationController::class, 'unreadCount']);
+    Route::put('/notifications/read-all', [\App\Http\Controllers\API\NotificationController::class, 'markAllAsRead']);
+    Route::put('/notifications/{id}/read', [\App\Http\Controllers\API\NotificationController::class, 'markAsRead']);
 });

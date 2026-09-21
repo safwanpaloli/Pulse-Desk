@@ -142,6 +142,14 @@ export default function App() {
                             </ProtectedRoute>
                         } 
                     />
+                    <Route 
+                        path="/notifications" 
+                        element={
+                            <ProtectedRoute>
+                                <Notifications />
+                            </ProtectedRoute>
+                        } 
+                    />
                 </Routes>
             </Router>
         </AuthProvider>
