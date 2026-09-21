@@ -32,5 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/invoices', [\App\Http\Controllers\InvoiceController::class, 'store']);
         Route::put('/invoices/{id}', [\App\Http\Controllers\InvoiceController::class, 'update']);
         Route::put('/invoices/{id}/status', [\App\Http\Controllers\InvoiceController::class, 'updateStatus']);
+
+        // Support Tickets
+        Route::get('/tickets', [\App\Http\Controllers\TicketController::class, 'index']);
+        Route::post('/tickets', [\App\Http\Controllers\TicketController::class, 'store']);
+        Route::get('/tickets/{id}', [\App\Http\Controllers\TicketController::class, 'show']);
+        Route::put('/tickets/{id}/status', [\App\Http\Controllers\TicketController::class, 'updateStatus']);
+        Route::post('/tickets/{id}/replies', [\App\Http\Controllers\TicketController::class, 'reply']);
     });
 });

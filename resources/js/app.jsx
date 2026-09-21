@@ -11,6 +11,8 @@ import AddCustomer from './pages/AddCustomer';
 import EditCustomer from './pages/EditCustomer';
 import Subscriptions from './pages/Subscriptions';
 import Invoices from './pages/Invoices';
+import Support from './pages/Support';
+import TicketDetails from './pages/TicketDetails';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -122,6 +124,22 @@ export default function App() {
                             <RoleRoute allowedRoles={['admin', 'manager']}>
                                 <Invoices />
                             </RoleRoute>
+                        } 
+                    />
+                    <Route 
+                        path="/support" 
+                        element={
+                            <ProtectedRoute>
+                                <Support />
+                            </ProtectedRoute>
+                        } 
+                    />
+                    <Route 
+                        path="/support/:id" 
+                        element={
+                            <ProtectedRoute>
+                                <TicketDetails />
+                            </ProtectedRoute>
                         } 
                     />
                 </Routes>
