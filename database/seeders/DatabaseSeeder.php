@@ -35,5 +35,18 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
             'role' => 'user',
         ]);
+
+        // Seed some dummy customers (standard users) for pagination testing
+        User::factory(30)->create([
+            'role' => 'user',
+            'status' => fn() => fake()->randomElement(['active', 'inactive', 'active']), // mostly active
+        ])->each(function ($user) {
+            // Give 70% of users a subscription
+            if (fake()->boolean(70)) {
+                \App\Models\Subscription::factory(1)->create([
+                    'user_id' => $user->id
+                ]);
+            }
+        });
     }
 }

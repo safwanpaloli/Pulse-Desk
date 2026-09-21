@@ -9,6 +9,7 @@ import Index from './pages/Index';
 import Customers from './pages/Customers';
 import AddCustomer from './pages/AddCustomer';
 import EditCustomer from './pages/EditCustomer';
+import Subscriptions from './pages/Subscriptions';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -103,6 +104,14 @@ export default function App() {
                         element={
                             <RoleRoute allowedRoles={['admin', 'manager']}>
                                 <EditCustomer />
+                            </RoleRoute>
+                        } 
+                    />
+                    <Route 
+                        path="/subscriptions" 
+                        element={
+                            <RoleRoute allowedRoles={['admin', 'manager']}>
+                                <Subscriptions />
                             </RoleRoute>
                         } 
                     />
