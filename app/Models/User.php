@@ -43,8 +43,13 @@ class User extends Authenticatable
         return $this->role === 'manager';
     }
 
-    public function isUser(): bool
+    public function hasRole($role): bool
     {
-        return $this->role === 'user';
+        return $this->role === $role;
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 }

@@ -14,10 +14,17 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Admin/Manager routes
     Route::middleware('role:admin,manager')->group(function () {
+        // Customers
         Route::get('/customers', [\App\Http\Controllers\API\CustomerController::class, 'index']);
         Route::post('/customers', [\App\Http\Controllers\API\CustomerController::class, 'store']);
         Route::get('/customers/{id}', [\App\Http\Controllers\API\CustomerController::class, 'show']);
         Route::put('/customers/{id}', [\App\Http\Controllers\API\CustomerController::class, 'update']);
         Route::put('/customers/{id}/status', [\App\Http\Controllers\API\CustomerController::class, 'updateStatus']);
+
+        // Subscriptions
+        Route::get('/subscriptions', [\App\Http\Controllers\SubscriptionController::class, 'index']);
+        Route::post('/subscriptions', [\App\Http\Controllers\SubscriptionController::class, 'store']);
+        Route::put('/subscriptions/{id}', [\App\Http\Controllers\SubscriptionController::class, 'update']);
+        Route::put('/subscriptions/{id}/cancel', [\App\Http\Controllers\SubscriptionController::class, 'cancel']);
     });
 });
