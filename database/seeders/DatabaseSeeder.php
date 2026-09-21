@@ -47,6 +47,13 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $user->id
                 ]);
             }
+            
+            // Give 80% of users some invoices
+            if (fake()->boolean(80)) {
+                \App\Models\Invoice::factory(fake()->numberBetween(1, 5))->create([
+                    'user_id' => $user->id
+                ]);
+            }
         });
     }
 }
