@@ -1,0 +1,8 @@
+domains:
+  - pulsedesk
+php_version: "8.5"
+framework: laravel
+framework_version: "13"
+services:
+  - mailpit
+  - redis
