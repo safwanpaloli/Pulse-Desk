@@ -1,21 +1,85 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
-    Activity, Users, CreditCard, DollarSign, AlertCircle
+    LayoutDashboard, 
+    Users, 
+    Settings, 
+    LogOut,
+    Menu,
+    X,
+    CreditCard,
+    FileText,
+    MessageSquare,
+    Bell,
+    Check
 } from 'lucide-react';
-
-const SidebarItem = ({ icon: Icon, label, path, active }) => (
-    <Link to={path} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium text-sm ${active ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50'}`}>
-        <Icon size={18} className={active ? 'text-zinc-900' : 'text-zinc-400'} />
-        {label}
-    </Link>
-);
+import { useAuth } from '../context/AuthContext';
+import axios from '../lib/axios';
 
 export default function Layout({ children }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    
+    // Notifications State
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [recentNotifications, setRecentNotifications] = useState([]);
+    const notificationRef = useRef(null);
+
+    const fetchUnreadCount = async () => {
+        try {
+            const { data } = await axios.get('/api/notifications/unread-count');
+            setUnreadCount(data.count);
+        } catch (error) {
+            console.error("Failed to fetch unread count", error);
+        }
+    };
+
+    const fetchRecentNotifications = async () => {
+        try {
+            const { data } = await axios.get('/api/notifications');
+            setRecentNotifications(data.data.slice(0, 5)); // Just take first 5 for dropdown
+        } catch (error) {
+            console.error("Failed to fetch notifications", error);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchUnreadCount();
+        }
+    }, [user, location.pathname]);
+
+    useEffect(() => {
+        if (showNotifications) {
+            fetchRecentNotifications();
+        }
+    }, [showNotifications]);
+
+    // Click outside to close notifications
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+                setShowNotifications(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [notificationRef]);
+
+    const markAsRead = async (id, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            await axios.put(`/api/notifications/${id}/read`);
+            setUnreadCount(prev => Math.max(0, prev - 1));
+            setRecentNotifications(prev => prev.map(n => n.id === id ? {...n, read_at: new Date().toISOString()} : n));
+        } catch (error) {
+            console.error("Failed to mark as read", error);
+        }
+    };
 
     const handleLogout = async () => {
         try {
@@ -26,50 +90,24 @@ export default function Layout({ children }) {
         }
     };
 
-    const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager';
+    const navItems = [
+        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard', roles: ['admin', 'manager', 'user'] },
+        { name: 'Customers', icon: Users, path: '/customers', roles: ['admin', 'manager'] },
+        { name: 'Subscriptions', icon: CreditCard, path: '/subscriptions', roles: ['admin', 'manager'] },
+        { name: 'Invoices', icon: FileText, path: '/invoices', roles: ['admin', 'manager'] },
+        { name: 'Support', icon: MessageSquare, path: '/support', roles: ['admin', 'manager', 'user'] },
+        { name: 'Settings', icon: Settings, path: '/settings', roles: ['admin', 'manager', 'user'] },
+    ];
+
+    const getNotificationColor = (type) => {
+        switch(type) {
+            case 'success': return 'bg-emerald-500';
+            case 'warning': return 'bg-amber-500';
+            default: return 'bg-blue-500';
+        }
+    };
 
     return (
-        <div className="flex h-screen bg-zinc-50 font-sans overflow-hidden">
-            {/* Left Sidebar */}
-            <aside className="w-64 bg-white border-r border-zinc-100 flex flex-col justify-between hidden md:flex">
-                <div>
-                    <div className="h-16 flex items-center px-6 border-b border-zinc-100 mb-6">
-                        <Link to="/dashboard" className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-zinc-800 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">P</span>
-                            </div>
-                            <h1 className="text-lg font-bold text-zinc-800 tracking-tight">PulseDesk</h1>
-                        </Link>
-                    </div>
-                    
-                    <div className="px-4 space-y-1">
-                        <SidebarItem 
-                            icon={Activity} 
-                            label="Dashboard" 
-                            path="/dashboard" 
-                            active={location.pathname === '/dashboard'} 
-                        />
-                        {isAdminOrManager && (
-                            <>
-                                <SidebarItem 
-                                    icon={Users} 
-                                    label="Customers" 
-                                    path="/customers" 
-                                    active={location.pathname === '/customers'} 
-                                />
-                                <SidebarItem 
-                                    icon={CreditCard} 
-                                    label="Subscriptions" 
-                                    path="/subscriptions" 
-                                    active={location.pathname === '/subscriptions'} 
-                                />
-                                <SidebarItem 
-                                    icon={DollarSign} 
-                                    label="Invoices" 
-                                    path="/invoices" 
-                                    active={location.pathname === '/invoices'} 
-                                />
-                            </>
         <div className="min-h-screen bg-zinc-50 flex">
             {/* Sidebar Desktop */}
             <aside className="hidden md:flex flex-col w-64 bg-white border-r border-zinc-100 fixed inset-y-0 z-20">

@@ -13,6 +13,8 @@ import Subscriptions from './pages/Subscriptions';
 import Invoices from './pages/Invoices';
 import Support from './pages/Support';
 import TicketDetails from './pages/TicketDetails';
+import Notifications from './pages/Notifications';
+import Settings from './pages/Settings';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -147,6 +149,14 @@ export default function App() {
                         element={
                             <ProtectedRoute>
                                 <Notifications />
+                            </ProtectedRoute>
+                        } 
+                    />
+                    <Route 
+                        path="/settings" 
+                        element={
+                            <ProtectedRoute>
+                                <Settings />
                             </ProtectedRoute>
                         } 
                     />

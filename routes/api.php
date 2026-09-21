@@ -46,4 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications/unread-count', [\App\Http\Controllers\API\NotificationController::class, 'unreadCount']);
     Route::put('/notifications/read-all', [\App\Http\Controllers\API\NotificationController::class, 'markAllAsRead']);
     Route::put('/notifications/{id}/read', [\App\Http\Controllers\API\NotificationController::class, 'markAsRead']);
+    
+    // Profile
+    Route::put('/profile', [\App\Http\Controllers\API\ProfileController::class, 'updateProfile']);
+    Route::put('/profile/password', [\App\Http\Controllers\API\ProfileController::class, 'updatePassword']);
 });
